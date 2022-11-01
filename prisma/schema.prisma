@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model comments {
+  idcomments Int       @id @default(autoincrement())
+  id_player  Int
+  name       String    @db.VarChar(255)
+  comment    String?   @db.VarChar(255)
+  likes      Int       @default(0)
+  timestamp  DateTime? @default(now()) @db.Timestamp(0)
+  players    players   @relation(fields: [id_player], references: [player_id], onDelete: Cascade, onUpdate: NoAction, map: "id_player")
+
+  @@index([id_player], map: "id_player_idx")
+}
+
+model social_profile {
+  idsocial_profile Int     @id @default(autoincrement())
+  user_id          Int
+  user_session     String? @db.VarChar(255)
+  user_name        String  @db.VarChar(255)
+  user_avatar      String? @db.VarChar(255)
+  user_emai        String  @unique(map: "user_emai_UNIQUE") @db.VarChar(255)
+  user             user    @relation(fields: [user_id], references: [iduser], onDelete: NoAction, onUpdate: NoAction, map: "iduser")
+
+  @@index([user_id], map: "iduser_idx")
+}
+
+model teams {
+  idteams     Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  description String    @db.VarChar(255)
+  image       String    @db.VarChar(255)
+  games       games[]
+  players     players[]
+}
+
+model user {
+  iduser         Int              @id @default(autoincrement())
+  email          String           @unique(map: "email_UNIQUE") @db.VarChar(255)
+  hash           String           @db.Text
+  user_name      String           @db.VarChar(255)
+  role           String?          @db.VarChar(255)
+  players        players[]
+  social_profile social_profile[]
+}
+
+model players {
+  player_id    Int                   @id @default(autoincrement())
+  id_user      Int
+  team_id      Int
+  name         String                @db.VarChar(255)
+  image        String?               @db.VarChar(255)
+  confirmation players_confirmation?
+  position     String                @db.VarChar(255)
+  goals        Int                   @default(0)
+  likes        Int                   @default(0)
+  weigh        String                @db.VarChar(45)
+  height       String                @db.VarChar(45)
+  user         user                  @relation(fields: [id_user], references: [iduser], onDelete: NoAction, onUpdate: NoAction, map: "id_user")
+  teams        teams                 @relation(fields: [team_id], references: [idteams], onDelete: NoAction, onUpdate: NoAction, map: "idteams")
+  comments     comments[]
+
+  @@index([team_id], map: "idteams_idx")
+  @@index([id_user], map: "iduser_idx")
+}
+
+model games {
+  idgames   Int      @id @default(autoincrement())
+  teamsid   Int
+  team_one  String?  @db.VarChar(255)
+  team_two  String?  @db.VarChar(255)
+  longitude Decimal? @db.Decimal(18, 10)
+  latitude  Decimal? @db.Decimal(18, 10)
+  address   String?  @db.VarChar(255)
+  date      String?  @db.VarChar(255)
+  time      String?  @db.VarChar(255)
+  teams     teams    @relation(fields: [teamsid], references: [idteams], onDelete: NoAction, onUpdate: NoAction, map: "teamsid")
+
+  @@index([teamsid], map: "idteams_idx")
+}
+
+enum players_confirmation {
+  absent
+  present
+}

@@ -10,7 +10,7 @@ The API is using MySQL as data source for the application.
 
 To run the API for the front end Futsal League web application follow the steps below.
 
-(remember to clone the front end side of the [Futsal League](https://github.com/HpatricioH/futsal-league-client-side/tree/main))
+(remember to clone the front end side of the [Futsal League](https://github.com/HpatricioH/futsal-league-front-end))
 
 1. In the server folder run `npm i` to install all the dependencies.
 2. `.env` file need to be created in the **futsal-league-server-side** folder and include prisma authentication URL:
